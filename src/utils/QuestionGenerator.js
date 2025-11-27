@@ -159,7 +159,10 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
         return validQuestions.slice(0, count);
 
     } catch (error) {
-        console.error("❌ Error generating AI questions:", error.message);
+        console.error("❌ Error generating AI questions:");
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Full error:", error);
         console.log("⚠️ Falling back to basic questions");
 
         // Fallback
