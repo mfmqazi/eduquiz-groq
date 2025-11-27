@@ -177,56 +177,57 @@ export default function Quiz() {
     return (
         <div className="max-w-3xl mx-auto mt-8">
             <div className="mb-6 flex justify-between items-end">
-                <div>
-                    <h2 className="text-sm font-medium text-indigo-400 mb-1">{subject} &gt; {topic}</h2>
-                    <h1 className="text-2xl font-bold text-white">Question {currentQuestionIndex + 1} <span className="text-slate-500 text-lg">/ {questions.length}</span></h1>
+                <div className="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 className="text-sm font-bold text-indigo-600 mb-1 tracking-wide uppercase">{subject} &gt; {topic}</h2>
+                        <h1 className="text-3xl font-extrabold text-slate-800">Question {currentQuestionIndex + 1} <span className="text-slate-400 text-xl font-medium">/ {questions.length}</span></h1>
+                    </div>
+                    <div className="text-slate-500 text-sm font-bold bg-white/50 px-3 py-1 rounded-full border border-slate-200">
+                        {grade}
+                    </div>
                 </div>
-                <div className="text-slate-400 text-sm font-mono">
-                    {grade}
+
+                <div className="w-full bg-slate-200 h-3 rounded-full mb-8 overflow-hidden shadow-inner">
+                    <div
+                        className="bg-gradient-to-r from-indigo-500 to-violet-500 h-full transition-all duration-500 ease-out shadow-lg"
+                        style={{ width: `${progress}%` }}
+                    ></div>
                 </div>
-            </div>
 
-            <div className="w-full bg-slate-700 h-2 rounded-full mb-8 overflow-hidden">
-                <div
-                    className="bg-indigo-500 h-full transition-all duration-500 ease-out"
-                    style={{ width: `${progress}%` }}
-                ></div>
-            </div>
+                <div className="glass-panel animate-fade-in bg-white/80 border-white/60 shadow-xl">
+                    <h3 className="text-xl font-medium text-slate-800 mb-8 leading-relaxed">
+                        <TextWithMath>{currentQuestion.question}</TextWithMath>
+                    </h3>
 
-            <div className="glass-panel animate-fade-in">
-                <h3 className="text-xl font-medium text-white mb-8 leading-relaxed">
-                    <TextWithMath>{currentQuestion.question}</TextWithMath>
-                </h3>
-
-                <div className="grid gap-4">
-                    {currentQuestion.options.map((option, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handleAnswerSelect(option)}
-                            className={`p-4 rounded-lg border text-left transition-all flex items-center justify-between group
+                    <div className="grid gap-4">
+                        {currentQuestion.options.map((option, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleAnswerSelect(option)}
+                                className={`p-5 rounded-xl border-2 text-left transition-all flex items-center justify-between group shadow-sm hover:shadow-md
                 ${selectedAnswer === option
-                                    ? 'bg-indigo-600/20 border-indigo-500 text-white'
-                                    : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:bg-slate-700 hover:border-slate-600'
-                                }`}
-                        >
-                            <span className="text-lg font-medium">
-                                <TextWithMath>{option}</TextWithMath>
-                            </span>
-                            {selectedAnswer === option && <CheckCircle size={20} className="text-indigo-400" />}
-                        </button>
-                    ))}
-                </div>
+                                        ? 'bg-indigo-50 border-indigo-500 text-indigo-900 ring-2 ring-indigo-200'
+                                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-indigo-300'
+                                    }`}
+                            >
+                                <span className="text-lg font-medium">
+                                    <TextWithMath>{option}</TextWithMath>
+                                </span>
+                                {selectedAnswer === option && <CheckCircle size={24} className="text-indigo-600" />}
+                            </button>
+                        ))}
+                    </div>
 
-                <div className="mt-8 flex justify-end">
-                    <button
-                        onClick={handleNextQuestion}
-                        disabled={!selectedAnswer}
-                        className="btn btn-primary px-8 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
-                    </button>
+                    <div className="mt-8 flex justify-end">
+                        <button
+                            onClick={handleNextQuestion}
+                            disabled={!selectedAnswer}
+                            className="btn btn-primary px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+            );
 }

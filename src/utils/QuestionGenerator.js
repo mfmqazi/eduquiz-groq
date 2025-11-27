@@ -60,7 +60,8 @@ export async function generateQuestions(grade, subject, topic, count = 5) {
         console.log(`🤖 Generating ${count} AI questions for ${grade} ${subject} - ${topic}...`);
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        // Use the stable 1.5-flash model which is reliable and free
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const prompt = `You are an expert educator and test designer creating high-quality exam preparation questions for US students.
 
@@ -93,7 +94,6 @@ CRITICAL REQUIREMENTS:
      * "Given $x \\neq 0$ and $y \\neq 3$"
      * "Calculate $\\sqrt{25} + 3^2$"
 
-
 For each question, provide:
 - A clear, specific question that tests understanding
 - 4 answer options (one correct, three plausible distractors)
@@ -113,8 +113,14 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
         const response = await result.response;
         let text = response.text();
 
-        // Clean up response
+        // Robust JSON cleaning
         text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        // Find the first '[' and last ']' to ensure we only parse the array
+        const firstBracket = text.indexOf('[');
+        const lastBracket = text.lastIndexOf(']');
+        if (firstBracket !== -1 && lastBracket !== -1) {
+            text = text.substring(firstBracket, lastBracket + 1);
+        }
 
         const questions = JSON.parse(text);
 

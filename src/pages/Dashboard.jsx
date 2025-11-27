@@ -23,18 +23,18 @@ export default function Dashboard() {
         <div className="max-w-4xl mx-auto">
             <h1 className="page-title animate-fade-in">Student Dashboard</h1>
 
-            <div className="glass-panel animate-fade-in">
-                <h2 className="text-xl font-semibold mb-6 text-indigo-200">Start a New Quiz</h2>
+            <div className="glass-panel animate-fade-in bg-white/60 border-white/50">
+                <h2 className="text-2xl font-bold mb-6 text-indigo-900">Start a New Quiz</h2>
 
                 <div className="grid md:grid-cols-3 gap-6">
                     {/* Grade Selection */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center gap-2">
-                            <GraduationCap size={16} className="text-indigo-400" />
+                        <label className="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
+                            <GraduationCap size={18} className="text-indigo-600" />
                             Select Grade
                         </label>
                         <select
-                            className="w-full p-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full p-3 bg-white border-2 border-indigo-100 rounded-xl text-slate-700 font-medium focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm hover:border-indigo-300 cursor-pointer"
                             value={grade}
                             onChange={(e) => {
                                 setGrade(e.target.value);
@@ -49,12 +49,12 @@ export default function Dashboard() {
 
                     {/* Subject Selection */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center gap-2">
-                            <Book size={16} className="text-indigo-400" />
+                        <label className="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
+                            <Book size={18} className="text-pink-600" />
                             Select Subject
                         </label>
                         <select
-                            className="w-full p-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full p-3 bg-white border-2 border-pink-100 rounded-xl text-slate-700 font-medium focus:ring-4 focus:ring-pink-500/20 focus:border-pink-500 transition-all shadow-sm hover:border-pink-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             value={subject}
                             onChange={(e) => {
                                 setSubject(e.target.value);
@@ -69,12 +69,12 @@ export default function Dashboard() {
 
                     {/* Topic Selection */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-300 mb-1 flex items-center gap-2">
-                            <Layers size={16} className="text-indigo-400" />
+                        <label className="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
+                            <Layers size={18} className="text-violet-600" />
                             Select Topic
                         </label>
                         <select
-                            className="w-full p-3 bg-slate-800/50 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full p-3 bg-white border-2 border-violet-100 rounded-xl text-slate-700 font-medium focus:ring-4 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-sm hover:border-violet-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             value={topic}
                             onChange={(e) => setTopic(e.target.value)}
                             disabled={!subject}
@@ -89,7 +89,7 @@ export default function Dashboard() {
                     <button
                         onClick={handleStartQuiz}
                         disabled={!grade || !subject || !topic}
-                        className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed px-8 py-3 text-lg"
+                        className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed px-8 py-3 text-lg shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50"
                     >
                         Start Quiz <ArrowRight size={20} />
                     </button>
@@ -99,17 +99,17 @@ export default function Dashboard() {
             <div className="grid md:grid-cols-2 gap-6 mt-8">
                 <div
                     onClick={() => navigate('/history')}
-                    className="glass-panel p-6 hover:bg-slate-800/40 transition-colors cursor-pointer group"
+                    className="glass-panel p-6 hover:bg-white/80 transition-all cursor-pointer group border-2 border-transparent hover:border-indigo-200 shadow-sm hover:shadow-md"
                 >
-                    <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-indigo-300 transition-colors">Recent Activity</h3>
-                    <p className="text-slate-400 text-sm">View your latest quiz attempts and track your progress over time.</p>
+                    <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-indigo-600 transition-colors">Recent Activity</h3>
+                    <p className="text-slate-500 text-sm">View your latest quiz attempts and track your progress over time.</p>
                 </div>
                 <div
                     onClick={() => alert('Study Materials feature coming soon!')}
-                    className="glass-panel p-6 hover:bg-slate-800/40 transition-colors cursor-pointer group"
+                    className="glass-panel p-6 hover:bg-white/80 transition-all cursor-pointer group border-2 border-transparent hover:border-pink-200 shadow-sm hover:shadow-md"
                 >
-                    <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-indigo-300 transition-colors">Study Materials</h3>
-                    <p className="text-slate-400 text-sm">Access recommended textbooks and resources based on your grade.</p>
+                    <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-pink-600 transition-colors">Study Materials</h3>
+                    <p className="text-slate-500 text-sm">Access recommended textbooks and resources based on your grade.</p>
                 </div>
             </div>
         </div>
