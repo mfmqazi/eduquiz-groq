@@ -21,6 +21,13 @@ const SUBJECTS_BY_GRADE = {
         "Science": ["Biology", "Chemistry", "Physics", "Environmental Science", "Anatomy & Physiology"],
         "English": ["American Literature", "British Literature", "World Literature", "Rhetoric & Composition", "Creative Writing"],
         "Social Studies": ["World History", "US History", "US Government & Civics", "Economics", "Psychology", "Sociology"]
+    },
+    // Advanced Placement (AP)
+    ap: {
+        "AP Math": ["AP Calculus AB", "AP Calculus BC", "AP Statistics", "AP Computer Science A"],
+        "AP Science": ["AP Biology", "AP Chemistry", "AP Physics 1", "AP Physics C", "AP Environmental Science"],
+        "AP English": ["AP English Language", "AP English Literature"],
+        "AP Social Studies": ["AP US History", "AP World History", "AP European History", "AP Government", "AP Macroeconomics", "AP Psychology"]
     }
 };
 
@@ -34,7 +41,9 @@ const getGradeLevel = (gradeNum) => {
 // Helper to generate structure for all grades
 const generateCurriculum = () => {
     const data = {};
-    for (let i = 1; i <= 12; i++) { // Extended to Grade 12
+
+    // Generate Grades 1-12
+    for (let i = 1; i <= 12; i++) {
         const grade = `Grade ${i}`;
         data[grade] = {};
 
@@ -43,12 +52,22 @@ const generateCurriculum = () => {
 
         Object.keys(curriculum).forEach(subject => {
             data[grade][subject] = {};
-            // Add topics for each subject
             curriculum[subject].forEach(topic => {
                 data[grade][subject][topic] = [];
             });
         });
     }
+
+    // Add AP Level
+    data["AP"] = {};
+    const apCurriculum = SUBJECTS_BY_GRADE.ap;
+    Object.keys(apCurriculum).forEach(subject => {
+        data["AP"][subject] = {};
+        apCurriculum[subject].forEach(topic => {
+            data["AP"][subject][topic] = [];
+        });
+    });
+
     return data;
 };
 
