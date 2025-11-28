@@ -12,6 +12,8 @@ export default function Quiz() {
     const grade = searchParams.get('grade');
     const subject = searchParams.get('subject');
     const topic = searchParams.get('topic');
+    const countParam = searchParams.get('count');
+    const questionCount = countParam ? parseInt(countParam) : 5;
     const navigate = useNavigate();
     const { currentUser } = useAuth();
 
@@ -32,7 +34,7 @@ export default function Quiz() {
                     setLoading(true);
                     setError('');
                     // Use the generator instead of static data
-                    const generatedQuestions = await generateQuestions(grade, subject, topic, 5);
+                    const generatedQuestions = await generateQuestions(grade, subject, topic, questionCount);
                     if (generatedQuestions && generatedQuestions.length > 0) {
                         setQuestions(generatedQuestions);
                     } else {

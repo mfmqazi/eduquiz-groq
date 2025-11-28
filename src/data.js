@@ -1,11 +1,13 @@
 // Define the curriculum structure
 const CURRICULUM = {
-    subjects: ["Math", "Science", "English", "Social Studies"],
+    subjects: ["Math", "Science", "English", "Social Studies", "Chemistry", "Biology"],
     topics: {
         "Math": ["Arithmetic", "Geometry", "Algebra", "Fractions", "Measurement"],
         "Science": ["Life Science", "Physical Science", "Earth Science", "Space", "Human Body"],
         "English": ["Grammar", "Vocabulary", "Reading Comprehension", "Spelling", "Writing"],
-        "Social Studies": ["History", "Geography", "Civics", "Economics", "Culture"]
+        "Social Studies": ["History", "Geography", "Civics", "Economics", "Culture"],
+        "Chemistry": ["Atoms & Molecules", "Periodic Table", "Chemical Reactions", "Bonding", "States of Matter"],
+        "Biology": ["Cells", "Genetics", "Ecology", "Evolution", "Human Anatomy"]
     }
 };
 

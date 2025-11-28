@@ -7,6 +7,7 @@ export default function Dashboard() {
     const [grade, setGrade] = useState('');
     const [subject, setSubject] = useState('');
     const [topic, setTopic] = useState('');
+    const [questionCount, setQuestionCount] = useState(5);
     const navigate = useNavigate();
 
     const grades = Object.keys(quizData);
@@ -15,7 +16,7 @@ export default function Dashboard() {
 
     function handleStartQuiz() {
         if (grade && subject && topic) {
-            navigate(`/quiz?grade=${grade}&subject=${subject}&topic=${topic}`);
+            navigate(`/quiz?grade=${grade}&subject=${subject}&topic=${topic}&count=${questionCount}`);
         }
     }
 
@@ -26,7 +27,7 @@ export default function Dashboard() {
             <div className="glass-panel animate-fade-in bg-white/60 border-white/50">
                 <h2 className="text-2xl font-bold mb-6 text-indigo-900">Start a New Quiz</h2>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {/* Grade Selection */}
                     <div className="space-y-2">
                         <label className="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
@@ -42,7 +43,7 @@ export default function Dashboard() {
                                 setTopic('');
                             }}
                         >
-                            <option value="">-- Choose Grade --</option>
+                            <option value="">-- Grade --</option>
                             {grades.map(g => <option key={g} value={g}>{g}</option>)}
                         </select>
                     </div>
@@ -62,7 +63,7 @@ export default function Dashboard() {
                             }}
                             disabled={!grade}
                         >
-                            <option value="">-- Choose Subject --</option>
+                            <option value="">-- Subject --</option>
                             {subjects.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
@@ -79,9 +80,31 @@ export default function Dashboard() {
                             onChange={(e) => setTopic(e.target.value)}
                             disabled={!subject}
                         >
-                            <option value="">-- Choose Topic --</option>
+                            <option value="">-- Topic --</option>
                             {topics.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
+                    </div>
+
+                    {/* Question Count Selection */}
+                    <div className="space-y-2">
+                        <label className="block text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
+                            <span className="text-emerald-600 font-bold text-lg">#</span>
+                            Questions: {questionCount}
+                        </label>
+                        <div className="pt-2 px-1">
+                            <input
+                                type="range"
+                                min="3"
+                                max="20"
+                                value={questionCount}
+                                onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+                                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                            />
+                            <div className="flex justify-between text-xs text-slate-400 font-medium mt-1">
+                                <span>3</span>
+                                <span>20</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
