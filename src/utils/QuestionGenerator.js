@@ -118,7 +118,8 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
 ]`;
 
         // Direct API call using fetch (more reliable than SDK in some environments)
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        // Using gemini-2.0-flash as requested (matching Seerah App implementation)
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
