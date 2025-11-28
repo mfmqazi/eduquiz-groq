@@ -25,28 +25,30 @@ export default function StudyMaterials() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto">
-            <div className="mb-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+            <div className="mb-12 text-center">
                 <button
                     onClick={() => navigate('/')}
-                    className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium mb-4 transition-colors"
+                    className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-bold mb-6 transition-colors bg-white/50 px-4 py-2 rounded-full hover:bg-white/80"
                 >
                     <Home size={18} />
                     Back to Dashboard
                 </button>
                 <h1 className="page-title">Study Materials</h1>
-                <p className="text-center text-slate-600 max-w-2xl mx-auto">
+                <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium">
                     Curated educational resources to supplement your learning journey
                 </p>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-10">
                 {Object.entries(materials).map(([gradeRange, resources]) => (
-                    <div key={gradeRange} className="glass-panel bg-white/80 border-white/60 shadow-lg">
-                        <h2 className="text-2xl font-bold text-slate-800 mb-6 pb-3 border-b-2 border-indigo-200">
-                            {gradeRange}
+                    <div key={gradeRange} className="glass-panel bg-white/80 border-white/60 shadow-xl p-8 md:p-10">
+                        <h2 className="text-3xl font-bold text-slate-800 mb-8 pb-4 border-b-2 border-indigo-100 flex items-center gap-3">
+                            <span className="bg-indigo-100 text-indigo-600 px-4 py-1 rounded-lg text-lg">
+                                {gradeRange}
+                            </span>
                         </h2>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {resources.map((resource, index) => {
                                 const Icon = resource.icon;
                                 return (
@@ -55,18 +57,18 @@ export default function StudyMaterials() {
                                         href={resource.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="group p-5 rounded-xl border-2 border-slate-200 bg-white hover:border-indigo-400 hover:shadow-lg transition-all"
+                                        className="group p-6 rounded-2xl border-2 border-slate-100 bg-white hover:border-indigo-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                                     >
                                         <div className="flex items-start gap-4">
-                                            <div className="p-3 rounded-lg bg-indigo-50 group-hover:bg-indigo-100 transition-colors">
-                                                <Icon className="text-indigo-600" size={24} />
+                                            <div className="p-4 rounded-xl bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 text-indigo-600">
+                                                <Icon size={28} />
                                             </div>
                                             <div className="flex-1">
-                                                <h3 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors mb-1">
+                                                <h3 className="text-lg font-bold text-slate-800 group-hover:text-indigo-600 transition-colors mb-1">
                                                     {resource.title}
                                                 </h3>
-                                                <p className="text-sm text-slate-500 mb-2">{resource.type}</p>
-                                                <div className="flex items-center gap-1 text-indigo-600 text-sm font-medium">
+                                                <p className="text-sm text-slate-500 mb-3 font-medium">{resource.type}</p>
+                                                <div className="flex items-center gap-1 text-indigo-600 text-sm font-bold group-hover:translate-x-1 transition-transform">
                                                     <span>Visit Resource</span>
                                                     <ExternalLink size={14} />
                                                 </div>
@@ -80,16 +82,18 @@ export default function StudyMaterials() {
                 ))}
             </div>
 
-            <div className="mt-12 glass-panel bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
-                <div className="flex items-start gap-4">
-                    <BookOpen className="text-indigo-600 flex-shrink-0" size={32} />
+            <div className="mt-12 glass-panel bg-gradient-to-r from-indigo-600 to-purple-600 border-transparent text-white p-10 shadow-2xl">
+                <div className="flex items-start gap-6">
+                    <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
+                        <BookOpen className="text-white flex-shrink-0" size={40} />
+                    </div>
                     <div>
-                        <h3 className="text-xl font-bold text-slate-800 mb-2">Need More Resources?</h3>
-                        <p className="text-slate-600 mb-4">
+                        <h3 className="text-2xl font-bold mb-3">Need More Resources?</h3>
+                        <p className="text-indigo-100 mb-4 text-lg leading-relaxed">
                             These are just starting points! Your school library, local public library, and teachers
                             can recommend additional materials tailored to your specific learning needs.
                         </p>
-                        <p className="text-sm text-slate-500 italic">
+                        <p className="text-sm text-white/80 italic font-medium bg-white/10 inline-block px-4 py-2 rounded-lg">
                             💡 Tip: Combine these resources with regular practice quizzes on EduQuiz for the best results!
                         </p>
                     </div>
