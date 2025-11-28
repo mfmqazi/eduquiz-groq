@@ -163,43 +163,42 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
             text = text.substring(firstBracket, lastBracket + 1);
         }
 
-        // --- JSON REPAIR LOGIC ---
-        // Attempt to fix common bad escapes in LaTeX before parsing
-        // This regex looks for a backslash that is NOT followed by a valid JSON escape char (", \, /, b, f, n, r, t, u)
-        // and escapes it.
-        // It also specifically targets common LaTeX commands like \frac, \sqrt, \text, etc. if they are single-escaped.
+        // --- AGGRESSIVE JSON REPAIR ---
+        // The issue is that the AI returns strings like "\frac" which is invalid JSON.
+        // Valid JSON requires "\\frac".
+        // We need to escape any backslash that is NOT followed by a valid JSON control char.
 
-        // 1. Fix specific LaTeX commands that might be single-escaped
-        const latexCommands = ['frac', 'sqrt', 'text', 'cdot', 'div', 'pm', 'approx', 'neq', 'leq', 'geq', 'infty'];
-        latexCommands.forEach(cmd => {
-            // Look for \cmd that is NOT preceded by a backslash (negative lookbehind not supported in all browsers, so we use a simpler approach)
-            // We replace single backslash \cmd with double backslash \\cmd
-            // But we have to be careful not to touch \\cmd
-            const regex = new RegExp(`(?<!\\\\)\\\\${cmd}`, 'g');
-            // Since JS regex lookbehind support varies, let's use a safer replace:
-            // We'll trust the general fix below more.
-        });
+        // 1. Replace double backslashes with a placeholder to protect them
+        let safeText = text.replace(/\\\\/g, '___DOUBLE_BACKSLASH___');
 
-        // 2. General fix: Replace single backslashes that are likely LaTeX with double backslashes
-        // This is tricky because JSON.parse expects \\ for a single backslash in the data.
-        // If the string contains "\s", JSON.parse throws. It needs "\\s".
-        // We replace \ followed by any character that isn't a valid escape char.
-        text = text.replace(/\\([^"\\/bfnrtu])/g, '\\\\$1');
+        // 2. Escape single backslashes that are causing the error
+        // Matches \ followed by anything that is NOT " / b f n r t u
+        safeText = safeText.replace(/\\([^"\\/bfnrtu])/g, '\\\\$1');
+
+        // 3. Restore the double backslashes (which are now safe)
+        safeText = safeText.replace(/___DOUBLE_BACKSLASH___/g, '\\\\');
 
         let questions;
         try {
-            questions = JSON.parse(text);
+            questions = JSON.parse(safeText);
         } catch (parseError) {
-            console.error("JSON Parse Error. Raw text:", text);
-            // Last ditch effort: try to strip all backslashes if they are causing issues, 
-            // though this breaks LaTeX rendering, it saves the app from crashing.
-            // Or try to escape ALL backslashes?
+            console.error("First JSON Parse Error. Retrying with raw text escape...", parseError);
+            console.log("Failed text:", safeText);
+
             try {
-                // Try escaping ALL backslashes if the first parse failed
-                const escapedText = text.replace(/\\/g, '\\\\');
-                questions = JSON.parse(escapedText);
+                // Last resort: Escape ALL backslashes in the original text
+                // This might result in double escaping (\\\\frac) which is actually what we want for JSON
+                // But we must be careful not to break valid escapes like \n or \"
+                // So let's try a simpler approach: just remove single backslashes if they aren't escapes? 
+                // No, that breaks math.
+
+                // Let's try to parse the original text but replacing ALL \ with \\ 
+                // EXCEPT for \"
+                const superSafe = text.replace(/\\/g, '\\\\').replace(/\\\\"/g, '\\"');
+                questions = JSON.parse(superSafe);
             } catch (retryError) {
-                throw parseError; // Throw original error if retry fails
+                console.error("Final JSON Parse Error:", retryError);
+                throw parseError;
             }
         }
 
