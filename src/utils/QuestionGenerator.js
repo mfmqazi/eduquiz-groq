@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -72,14 +71,6 @@ export async function generateQuestions(grade, subject, topic, count = 5) {
     try {
         console.log(`🤖 Generating ${count} AI questions for ${grade} ${subject} - ${topic}...`);
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-
-        // Try the specific version which is often more stable
-        let model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-001" });
-
-        // Note: If this fails, we could try 'gemini-pro' but let's stick to the requested one first.
-        // The error 404 usually means the alias isn't found, so -001 should fix it.
-
         const prompt = `You are an expert educator and test designer creating high-quality exam preparation questions for US students.
 
 Generate ${count} challenging, exam-style multiple-choice questions for:
@@ -126,9 +117,33 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
   }
 ]`;
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        let text = response.text();
+        // Direct API call using fetch (more reliable than SDK in some environments)
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }]
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
+            throw new Error('Invalid API response structure');
+        }
+
+        let text = data.candidates[0].content.parts[0].text;
 
         // Robust JSON cleaning
         text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
