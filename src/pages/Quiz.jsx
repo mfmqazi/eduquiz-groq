@@ -197,7 +197,7 @@ export default function Quiz() {
             </div>
 
             <div className="glass-panel animate-fade-in bg-white/80 border-white/60 shadow-xl">
-                <h3 className="text-xl font-medium text-slate-800 mb-8 leading-relaxed">
+                <h3 className="text-xl font-medium text-slate-800 mb-8 leading-relaxed question-text">
                     <TextWithMath>{currentQuestion.question}</TextWithMath>
                 </h3>
 

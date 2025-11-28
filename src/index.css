@@ -176,7 +176,34 @@ button {
 }
 
 /* Math rendering styles */
+.math-inline {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0.2em;
+}
+
 .math-display {
   overflow-x: auto;
   padding: 1rem 0;
+  text-align: center;
+  margin: 1.5rem 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0.5rem;
+}
+
+/* Improve KaTeX font sizing and spacing */
+.katex {
+  font-size: 1.15em !important;
+  line-height: 1.2 !important;
+}
+
+.katex-display {
+  margin: 0.5em 0 !important;
+}
+
+/* Ensure text wrapping around math is smooth */
+.question-text {
+  line-height: 1.9;
+  word-wrap: break-word;
+  color: #334155;
 }
