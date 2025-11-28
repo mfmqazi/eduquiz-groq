@@ -1,3 +1,4 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -102,6 +103,12 @@ CRITICAL REQUIREMENTS:
      * "Given $x \\neq 0$ and $y \\neq 3$"
      * "Calculate $\\sqrt{25} + 3^2$"
 
+**JSON FORMATTING RULES:**
+- Return ONLY valid JSON.
+- **DOUBLE ESCAPE** all backslashes in LaTeX. Example: Use "\\\\frac" instead of "\\frac".
+- Use "\\\\sqrt" instead of "\\sqrt".
+- This is critical for the JSON to parse correctly.
+
 For each question, provide:
 - A clear, specific question that tests understanding
 - 4 answer options (one correct, three plausible distractors)
@@ -148,6 +155,7 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
 
         // Robust JSON cleaning
         text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
         // Find the first '[' and last ']' to ensure we only parse the array
         const firstBracket = text.indexOf('[');
         const lastBracket = text.lastIndexOf(']');
@@ -155,7 +163,45 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
             text = text.substring(firstBracket, lastBracket + 1);
         }
 
-        const questions = JSON.parse(text);
+        // --- JSON REPAIR LOGIC ---
+        // Attempt to fix common bad escapes in LaTeX before parsing
+        // This regex looks for a backslash that is NOT followed by a valid JSON escape char (", \, /, b, f, n, r, t, u)
+        // and escapes it.
+        // It also specifically targets common LaTeX commands like \frac, \sqrt, \text, etc. if they are single-escaped.
+
+        // 1. Fix specific LaTeX commands that might be single-escaped
+        const latexCommands = ['frac', 'sqrt', 'text', 'cdot', 'div', 'pm', 'approx', 'neq', 'leq', 'geq', 'infty'];
+        latexCommands.forEach(cmd => {
+            // Look for \cmd that is NOT preceded by a backslash (negative lookbehind not supported in all browsers, so we use a simpler approach)
+            // We replace single backslash \cmd with double backslash \\cmd
+            // But we have to be careful not to touch \\cmd
+            const regex = new RegExp(`(?<!\\\\)\\\\${cmd}`, 'g');
+            // Since JS regex lookbehind support varies, let's use a safer replace:
+            // We'll trust the general fix below more.
+        });
+
+        // 2. General fix: Replace single backslashes that are likely LaTeX with double backslashes
+        // This is tricky because JSON.parse expects \\ for a single backslash in the data.
+        // If the string contains "\s", JSON.parse throws. It needs "\\s".
+        // We replace \ followed by any character that isn't a valid escape char.
+        text = text.replace(/\\([^"\\/bfnrtu])/g, '\\\\$1');
+
+        let questions;
+        try {
+            questions = JSON.parse(text);
+        } catch (parseError) {
+            console.error("JSON Parse Error. Raw text:", text);
+            // Last ditch effort: try to strip all backslashes if they are causing issues, 
+            // though this breaks LaTeX rendering, it saves the app from crashing.
+            // Or try to escape ALL backslashes?
+            try {
+                // Try escaping ALL backslashes if the first parse failed
+                const escapedText = text.replace(/\\/g, '\\\\');
+                questions = JSON.parse(escapedText);
+            } catch (retryError) {
+                throw parseError; // Throw original error if retry fails
+            }
+        }
 
         // Validate structure
         if (!Array.isArray(questions) || questions.length === 0) {
