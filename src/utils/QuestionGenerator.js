@@ -197,18 +197,21 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
             // We aggressively restore backslashes for common LaTeX commands if they appear without one.
             // But we must be careful NOT to break words (e.g. "sometimes" -> "some\times").
             // We only replace if the command is preceded by a non-word character or start of string.
+            // AND we use a negative lookahead to ensure it's not the start of a longer word (e.g. "fraction")
 
-            const commonCommands = ['frac', 'neq', 'times', 'sqrt', 'cdot', 'div', 'pm', 'approx', 'leq', 'geq', 'infty'];
+            // Removed 'div', 'times', 'pm' because they match common words (divided, sometimes, pm) and are too risky.
+            const commonCommands = ['frac', 'neq', 'sqrt', 'cdot', 'approx', 'leq', 'geq', 'infty'];
 
             commonCommands.forEach(cmd => {
                 // Replace " cmd" with " \cmd"
-                // We use a regex that captures the preceding char which must be non-alphanumeric (or space)
-                // [^a-zA-Z0-9] matches symbols, spaces, braces, etc.
-                const regex = new RegExp(`([^a-zA-Z0-9\\\\])${cmd}`, 'g');
+                // 1. Preceded by non-alphanumeric (or space)
+                // 2. Followed by non-letter (to avoid matching "fraction" for "frac")
+                const regex = new RegExp(`([^a-zA-Z0-9\\\\])${cmd}(?![a-zA-Z])`, 'g');
                 s = s.replace(regex, `$1\\\\${cmd}`);
 
                 // Handle case where it's at the very start of the string
-                if (s.startsWith(cmd)) {
+                const startRegex = new RegExp(`^${cmd}(?![a-zA-Z])`);
+                if (startRegex.test(s)) {
                     s = '\\\\' + s;
                 }
             });
