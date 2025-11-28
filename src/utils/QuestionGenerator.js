@@ -90,6 +90,8 @@ CRITICAL REQUIREMENTS:
 8. **IMPORTANT**: For ALL mathematical expressions, use LaTeX notation:
    - Wrap inline math in single dollar signs: $x^2$
    - Wrap display math in double dollar signs: $$\\frac{a}{b}$$
+   - **ALWAYS wrap LaTeX environments** (like cases, matrices) in double dollar signs:
+     $$ \\begin{cases} ... \\end{cases} $$
    - Use \\neq for "not equal": $x \\neq 2$
    - Use \\frac{numerator}{denominator} for fractions: $\\frac{3}{4}$
    - Use ^ for exponents: $x^2$, $10^3$
@@ -97,6 +99,7 @@ CRITICAL REQUIREMENTS:
    - Use \\sqrt{} for square roots: $\\sqrt{16}$
    - Use \\cdot for multiplication: $2 \\cdot 3$
    - Use \\div for division: $6 \\div 2$
+   - **DO NOT** put long sentences inside math delimiters. Only math symbols and numbers should be inside $.
    - Examples: 
      * "Solve $2x + 3 = 7$"
      * "Simplify $\\frac{x^2 - 4}{x - 2}$"

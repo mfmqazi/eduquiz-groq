@@ -35,9 +35,13 @@ export function renderTextWithMath(text) {
     let currentIndex = 0;
 
     // First, find all $$...$$ (display math)
-    const displayMatches = [...text.matchAll(/\$\$(.*?)\$\$/g)];
+    const displayMatches = [...text.matchAll(/\$\$(.*?)\$\$/gs)];
 
-    // Then find all $...$ (inline math) but exclude those inside $$...$$
+    // Find LaTeX environments like \begin{equation}...\end{equation}
+    // We treat these as display math automatically
+    const envMatches = [...text.matchAll(/\\begin\{([a-zA-Z]+)\}(.*?)\\end\{\1\}/gs)];
+
+    // Then find all $...$ (inline math)
     const inlineMatches = [...text.matchAll(/\$([^$]+?)\$/g)];
 
     // Combine and sort all matches by position
@@ -45,6 +49,12 @@ export function renderTextWithMath(text) {
         ...displayMatches.map(m => ({
             type: 'display',
             content: m[1],
+            start: m.index,
+            end: m.index + m[0].length
+        })),
+        ...envMatches.map(m => ({
+            type: 'display',
+            content: m[0], // Use the full match including \begin and \end
             start: m.index,
             end: m.index + m[0].length
         })),
