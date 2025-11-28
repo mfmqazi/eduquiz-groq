@@ -198,12 +198,12 @@ export default function Quiz() {
                 ></div>
             </div>
 
-            <div className="glass-panel animate-fade-in bg-white/80 border-white/60 shadow-xl">
-                <h3 className="text-xl font-medium text-slate-800 mb-8 leading-relaxed question-text">
+            <div className="glass-panel animate-fade-in bg-white/80 border-white/60 shadow-xl p-8 md:p-10">
+                <h3 className="text-xl md:text-2xl font-medium text-slate-800 mb-10 leading-relaxed question-text">
                     <TextWithMath>{currentQuestion.question}</TextWithMath>
                 </h3>
 
-                <div className="grid gap-4">
+                <div className="grid gap-6">
                     {currentQuestion.options.map((option, index) => {
                         const isCorrect = option === currentQuestion.answer;
                         const isSelected = selectedAnswer === option;
@@ -215,7 +215,7 @@ export default function Quiz() {
                                 key={index}
                                 onClick={() => handleAnswerSelect(option)}
                                 disabled={showFeedback}
-                                className={`p-5 rounded-xl border-2 text-left transition-all flex items-center justify-between group shadow-sm hover:shadow-md disabled:cursor-not-allowed
+                                className={`p-6 rounded-xl border-2 text-left transition-all flex items-center justify-between group shadow-sm hover:shadow-md disabled:cursor-not-allowed
                                     ${showAsCorrect
                                         ? 'bg-green-50 border-green-500 text-green-900 ring-2 ring-green-200'
                                         : showAsWrong
