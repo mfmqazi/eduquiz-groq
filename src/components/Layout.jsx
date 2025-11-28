@@ -21,60 +21,67 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center py-4">
-          <Link to="/" className="text-2xl font-extrabold text-white flex items-center gap-2 drop-shadow-md">
-            <BookOpen className="text-white" strokeWidth={2.5} />
-            <span>EduQuiz</span>
-          </Link>
+      <header className="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-700 text-white shadow-lg z-10">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div
+            className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={() => navigate('/')}
+          >
+            <BookOpen size={28} strokeWidth={2.5} />
+            <span className="text-2xl font-black tracking-tight">EduQuiz</span>
+          </div>
 
-          {currentUser && (
-            <div className="flex items-center gap-6">
-              <div className="hidden md:flex gap-1 bg-white/10 p-1 rounded-full backdrop-blur-sm">
-                <Link
-                  to="/"
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all font-medium ${isActive('/') ? 'bg-white text-indigo-600 shadow-sm' : 'text-white/90 hover:bg-white/10 hover:text-white'}`}
+          <div className="flex items-center gap-4">
+            {currentUser ? (
+              <>
+                <button
+                  onClick={() => navigate('/')}
+                  className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all font-medium text-sm backdrop-blur-sm"
                 >
                   <LayoutDashboard size={18} />
                   Dashboard
-                </Link>
-                <Link
-                  to="/history"
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all font-medium ${isActive('/history') ? 'bg-white text-indigo-600 shadow-sm' : 'text-white/90 hover:bg-white/10 hover:text-white'}`}
+                </button>
+                <button
+                  onClick={() => navigate('/history')}
+                  className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all font-medium text-sm backdrop-blur-sm"
                 >
                   <History size={18} />
                   History
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-4 pl-6 border-l border-white/20">
-                <div className="text-right hidden sm:block">
-                  <div className="text-sm font-bold text-white">
-                    {userData?.firstName} {userData?.lastName}
-                  </div>
-                  <div className="text-xs text-indigo-100 font-medium">@{userData?.username}</div>
+                </button>
+                <div className="h-8 w-px bg-white/20 mx-1 hidden md:block"></div>
+                <div className="text-right mr-2 hidden sm:block">
+                  <div className="text-sm font-bold">{currentUser.displayName || 'Student'}</div>
+                  <div className="text-xs text-indigo-200">@{currentUser.email.split('@')[0]}</div>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-2 rounded-full hover:bg-white/20 text-white transition-all"
-                  title="Log Out"
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                  title="Sign Out"
                 >
                   <LogOut size={20} />
                 </button>
+              </>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => navigate('/login')}
+                  className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all font-bold text-sm"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="px-4 py-2 rounded-lg bg-white text-indigo-700 hover:bg-indigo-50 transition-all font-bold text-sm shadow-md"
+                >
+                  Sign Up
+                </button>
               </div>
-            </div>
-          )}
-
-          {!currentUser && (
-            <div className="flex gap-4">
-              <Link to="/login" className="text-white/90 hover:text-white font-medium px-4 py-2">Log In</Link>
-              <Link to="/signup" className="px-5 py-2 rounded-full bg-white text-indigo-600 hover:bg-indigo-50 font-bold transition-all shadow-md">Sign Up</Link>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </nav>
+      </header>
 
-      <main className="flex-grow container mx-auto py-8 px-4">
+      <main className="flex-grow p-4 md:p-6">
         {children}
       </main>
 
