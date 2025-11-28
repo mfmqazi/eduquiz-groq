@@ -93,7 +93,8 @@ CRITICAL REQUIREMENTS:
    - **ALWAYS wrap LaTeX environments** (like cases, matrices) in double dollar signs:
      $$ \\begin{cases} ... \\end{cases} $$
    - Use \\neq for "not equal": $x \\neq 2$
-   - Use \\frac{numerator}{denominator} for fractions: $\\frac{3}{4}$
+   - Use \\frac{numerator}{denominator} for fractions: $\\frac{3}{4}$ (NEVER use \\frac12)
+   - **ALWAYS use braces {} for fractions**, e.g., $\\frac{1}{2}$, not $\\frac12$
    - Use ^ for exponents: $x^2$, $10^3$
    - Use _ for subscripts: $H_2O$
    - Use \\sqrt{} for square roots: $\\sqrt{16}$
@@ -193,10 +194,27 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
             }
 
             // 6. Fix specific common issues where backslash might be missing
-            // If we see "frac{" without a backslash, add it.
-            s = s.replace(/([^\\])frac\{/g, '$1\\\\frac{');
-            // Handle start of string case
-            if (s.startsWith('frac{')) s = '\\\\frac{' + s.substring(5);
+            // We aggressively restore backslashes for common LaTeX commands if they appear without one.
+            // We use [^\\\\] to ensure we don't double-escape if it's already correct (e.g. \\frac).
+            // We match the command preceded by a non-backslash character (or start of line).
+
+            const commonCommands = ['frac', 'neq', 'times', 'sqrt', 'cdot', 'div', 'pm', 'approx', 'leq', 'geq', 'infty'];
+
+            commonCommands.forEach(cmd => {
+                // Replace " cmd" with " \cmd"
+                // We use a regex that captures the preceding char
+                const regex = new RegExp(`([^\\\\])${cmd}`, 'g');
+                s = s.replace(regex, `$1\\\\${cmd}`);
+
+                // Handle case where it's at the very start of the string
+                if (s.startsWith(cmd)) {
+                    s = '\\\\' + s;
+                }
+            });
+
+            // 7. Fix malformed fractions like \frac12 (missing braces) -> \frac{1}{2}
+            // This is a heuristic: \frac followed by 2 digits
+            s = s.replace(/\\\\frac\s?(\d)(\d)/g, '\\\\frac{$1}{$2}');
 
             return s;
         };
