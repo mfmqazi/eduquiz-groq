@@ -120,7 +120,8 @@ CRITICAL REQUIREMENTS:
 5. Wrong answers should be plausible misconceptions students actually have
 6. Avoid trivial recall questions - focus on understanding and analysis
 7. Use proper academic language appropriate for ${grade}
-8. **IMPORTANT**: For ALL mathematical expressions, use LaTeX notation:
+8. **IMPORTANT FOR NON-ENGLISH TEXT**: Use proper Unicode characters for accented letters (ñ, á, é, í, ó, ú, ü, etc.). DO NOT use LaTeX accent codes like \'n or \'{a}. Write Spanish, French, and other languages with their proper Unicode characters.
+9. **IMPORTANT**: For ALL mathematical expressions, use LaTeX notation:
    - Wrap inline math in single dollar signs: $x^2$
    - Wrap display math in double dollar signs: $$\\frac{a}{b}$$
    - **ALWAYS wrap LaTeX environments** (like cases, matrices) in double dollar signs:
@@ -197,6 +198,42 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
         }
 
         let text = data.choices[0].message.content;
+
+        // --- FIX LATEX ACCENT CODES ---
+        // Convert LaTeX accent codes to proper Unicode characters
+        const cleanLatexAccents = (str) => {
+            const accentMap = {
+                // Acute accents
+                "\\'a": "á", "\\'e": "é", "\\'i": "í", "\\'o": "ó", "\\'u": "ú",
+                "\\'A": "Á", "\\'E": "É", "\\'I": "Í", "\\'O": "Ó", "\\'U": "Ú",
+                "\\'{a}": "á", "\\'{e}": "é", "\\'{i}": "í", "\\'{o}": "ó", "\\'{u}": "ú",
+                "\\'{A}": "Á", "\\'{E}": "É", "\\'{I}": "Í", "\\'{O}": "Ó", "\\'{U}": "Ú",
+                // Tilde
+                "\\~n": "ñ", "\\~N": "Ñ", "\\'{n}": "ñ", "\\'{N}": "Ñ",
+                "\\~{n}": "ñ", "\\~{N}": "Ñ",
+                // Umlaut
+                "\\\"u": "ü", "\\\"U": "Ü", "\\\"{u}": "ü", "\\\"{U}": "Ü",
+                // Cedilla
+                "\\c{c}": "ç", "\\c{C}": "Ç",
+                // Also handle double-escaped versions from JSON
+                "\\\\'a": "á", "\\\\'e": "é", "\\\\'i": "í", "\\\\'o": "ó", "\\\\'u": "ú",
+                "\\\\'A": "Á", "\\\\'E": "É", "\\\\'I": "Í", "\\\\'O": "Ó", "\\\\'U": "Ú",
+                "\\\\'{a}": "á", "\\\\'{e}": "é", "\\\\'{i}": "í", "\\\\'{o}": "ó", "\\\\'{u}": "ú",
+                "\\\\'{A}": "Á", "\\\\'{E}": "É", "\\\\'{I}": "Í", "\\\\'{O}": "Ó", "\\\\'{U}": "Ú",
+                "\\\\'{n}": "ñ", "\\\\'{N}": "Ñ", "\\\\~n": "ñ", "\\\\~N": "Ñ",
+                "\\\\~{n}": "ñ", "\\\\~{N}": "Ñ",
+                "\\\\\"{u}": "ü", "\\\\\"{U}": "Ü"
+            };
+
+            let result = str;
+            for (const [latex, unicode] of Object.entries(accentMap)) {
+                result = result.split(latex).join(unicode);
+            }
+            return result;
+        };
+
+        // Apply accent cleaning first
+        text = cleanLatexAccents(text);
 
         // --- ROBUST JSON CLEANING ---
         const cleanJSON = (str) => {
