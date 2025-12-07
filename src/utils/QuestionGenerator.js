@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// Groq API - Using LLaMA 3.3 70B for fast, high-quality question generation
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -58,26 +58,26 @@ function generateFallbackQuestion(grade, subject, topic) {
 }
 
 export async function generateQuestions(grade, subject, topic, count = 5) {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const apiKey = import.meta.env.VITE_GROQ_API_KEY;
 
     // Debug log to check if key exists (don't log the actual key)
-    console.log("🔑 API Key Status:", apiKey ? "Present" : "Missing");
+    console.log("🔑 Groq API Key Status:", apiKey ? "Present" : "Missing");
 
     // If no API key, use fallback
-    if (!apiKey || apiKey.includes("your_gemini_api_key")) {
-        console.warn("⚠️ No valid Gemini API key. Using fallback.");
+    if (!apiKey || apiKey.includes("your_groq_api_key")) {
+        console.warn("⚠️ No valid Groq API key. Using fallback.");
         return Array.from({ length: count }, () => generateFallbackQuestion(grade, subject, topic));
     }
 
     // Parallel Fetching Strategy
     // We fetch questions in small batches (size 1) in parallel to maximize speed.
-    // Gemini Flash is very fast, but generating 5 questions serially takes time.
+    // Groq is extremely fast with LLaMA models, but parallel requests further reduce wait time.
     // Parallel requests reduce the total wait time to roughly the time of generating 1 question.
 
     const BATCH_SIZE = 1;
     const promises = [];
 
-    console.log(`🚀 Starting parallel generation for ${count} questions...`);
+    console.log(`🚀 Starting parallel generation for ${count} questions with Groq...`);
 
     for (let i = 0; i < count; i += BATCH_SIZE) {
         const size = Math.min(BATCH_SIZE, count - i);
@@ -161,33 +161,42 @@ Return ONLY valid JSON (no markdown, no code blocks, no extra text):
   }
 ]`;
 
-        // Direct API call using fetch
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        // Groq API call using OpenAI-compatible endpoint
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: prompt
-                    }]
-                }]
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are an expert educator creating exam questions. Always respond with ONLY valid JSON - no markdown, no code blocks.'
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ],
+                temperature: 0.7,
+                max_tokens: 2048,
             })
         });
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+            throw new Error(`Groq API Error: ${errorData.error?.message || response.statusText}`);
         }
 
         const data = await response.json();
 
-        if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
-            throw new Error('Invalid API response structure');
+        if (!data.choices || !data.choices[0]?.message?.content) {
+            throw new Error('Invalid Groq API response structure');
         }
 
-        let text = data.candidates[0].content.parts[0].text;
+        let text = data.choices[0].message.content;
 
         // --- ROBUST JSON CLEANING ---
         const cleanJSON = (str) => {

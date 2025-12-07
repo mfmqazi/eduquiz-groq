@@ -13,7 +13,7 @@ import StudyMaterials from './pages/StudyMaterials';
 
 function App() {
   return (
-    <Router basename={import.meta.env.DEV ? '/' : '/eduquiz'}>
+    <Router basename={import.meta.env.DEV ? '/' : '/eduquiz-groq'}>
       <AuthProvider>
         <Layout>
           <Routes>
