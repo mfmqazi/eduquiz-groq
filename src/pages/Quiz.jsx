@@ -107,10 +107,42 @@ export default function Quiz() {
 
     if (loading) {
         return (
-            <div className="text-center mt-20">
-                <div className="glass-panel inline-block px-8 py-6 bg-white/60 border-white/50">
-                    <div className="text-indigo-900 text-xl mb-2 font-bold">Generating your unique quiz...</div>
-                    <div className="text-slate-500 text-sm">This may take a few seconds</div>
+            <div className="flex items-center justify-center mt-20">
+                <div className="glass-panel loading-container bg-white/80 border-white/60 shadow-xl">
+                    {/* Animated Spinner */}
+                    <div className="loading-spinner">
+                        <div className="spinner-ring"></div>
+                        <div className="spinner-ring"></div>
+                        <div className="spinner-ring"></div>
+                        <div className="orbit">
+                            <div className="orbit-dot"></div>
+                        </div>
+                        <div className="orbit">
+                            <div className="orbit-dot"></div>
+                        </div>
+                        <div className="orbit">
+                            <div className="orbit-dot"></div>
+                        </div>
+                        <div className="center-pulse"></div>
+                    </div>
+
+                    {/* Loading Text */}
+                    <div className="loading-title">
+                        Generating Your Quiz
+                        <span className="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </div>
+                    <div className="loading-subtitle">
+                        Crafting unique questions for {subject} - {topic}
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="loading-progress">
+                        <div className="loading-progress-bar"></div>
+                    </div>
                 </div>
             </div>
         );
